@@ -1,0 +1,24 @@
+workflows:
+  ios-unsigned:
+    name: iOS unsigned IPA (для sideload через AltStore/SideStore)
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      flutter: stable
+    scripts:
+      - name: Generate iOS scaffolding
+        script: |
+          # ios/ не хранится в репо — генерируем на месте
+          flutter create --org com.vilgach --project-name mangalib_app --platforms=ios .
+      - name: Get packages
+        script: flutter pub get
+      - name: Build (no codesign)
+        script: flutter build ios --release --no-codesign
+      - name: Package unsigned IPA
+        script: |
+          cd build/ios/iphoneos
+          mkdir Payload
+          cp -r Runner.app Payload/
+          zip -qr mangalib_app.ipa Payload
+    artifacts:
+      - build/ios/iphoneos/mangalib_app.ipa
