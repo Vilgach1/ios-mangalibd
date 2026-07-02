@@ -1,28 +1,29 @@
-# MangaLib iOS (Flutter)
+# MangaLib iOS (WebView)
 
-Клиент MangaLib + SlashLib для iOS: каталог, поиск, читалка глав, авторизация через lib.social (WebView, перехват токена).
+Простая обёртка: приложение открывает mangalib.me / slashlib.me внутри себя (полноценный сайт, без переизобретения интерфейса). Авторизация, каталог, читалка — всё как на сайте, через мобильный User-Agent.
+
+## Возможности
+
+- Переключатель MangaLib ↔ SlashLib (кнопка в шапке)
+- Кнопка обновить страницу
+- Кнопка "назад" по истории сайта (и системный swipe-back на iOS)
 
 ## Сборка через Codemagic (без Mac)
 
 1. Запушь этот репозиторий на GitHub.
-2. Зарегистрируйся на [codemagic.io](https://codemagic.io) (бесплатный тир — 500 минут/мес на macOS M2).
-3. Add application → выбери репозиторий → Codemagic сам найдёт `codemagic.yaml`.
-4. Start new build → workflow `ios-unsigned`.
-5. Скачай артефакт `mangalib_app.ipa`.
+2. codemagic.io → Add application → выбери репозиторий (подхватит `codemagic.yaml`).
+3. Switch to YAML configuration → выбери workflow `ios-unsigned` → Start new build.
+4. Скачай артефакт `mangalib_app.ipa`.
 
 ## Установка на iPhone (бесплатно, без Developer-аккаунта)
 
-1. Поставь [AltStore](https://altstore.io) или [SideStore](https://sidestore.io) на iPhone (нужен AltServer на ПК для первой установки).
-2. Открой скачанный `.ipa` через AltStore — он подпишет его твоим Apple ID.
-3. Ограничение бесплатного Apple ID: подпись живёт 7 дней, AltStore авто-продлевает при подключении к той же Wi-Fi сети, что и AltServer.
+1. AltServer на ПК (altstore.io) + AltStore на iPhone.
+2. Открой `.ipa` через AltStore → My Apps → + → подпишет твоим Apple ID.
+3. Ограничение: сертификат живёт 7 дней, AltStore продлевает сам при подключении к той же Wi-Fi, что и AltServer.
 
 ## Структура
 
-- `lib/api.dart` — клиент API `api.cdnlibs.org` (общий для mangalib/slashlib, переключение через заголовок `Site-Id`)
-- `lib/screens/catalog.dart` — каталог + поиск + переключатель сайта
-- `lib/screens/title.dart` — страница тайтла и список глав
-- `lib/screens/reader.dart` — читалка (вертикальный скролл, зум, перелистывание глав)
-- `lib/screens/profile.dart` — авторизация (WebView → токен из localStorage) и профиль
+- `lib/main.dart` — вся логика: WebView + переключение сайта
 - `codemagic.yaml` — CI: генерирует `ios/`, собирает неподписанный IPA
 
 Папка `ios/` не хранится в репо — Codemagic генерирует её на каждой сборке (`flutter create`).
